@@ -18,64 +18,45 @@ public class KeyboardFactory
     // Main Menu
     // ====================================================
 
-    public async Task<ReplyKeyboardMarkup>
-        GetMainMenuAsync(long telegramId)
+    public async Task<ReplyKeyboardMarkup> GetMainMenuAsync(long telegramId)
     {
-        var projects =
-            await _projectService
-            .GetByTelegramIdAsync(telegramId);
+        var projects = await _projectService.GetByTelegramIdAsync(telegramId);
 
-        var buttons =
-            new List<KeyboardButton[]>
-            {
-                new[]
-                {
-                    new KeyboardButton(
-                        BotButtons.MyProjects)
-                },
+        // بننشئ قائمة الأزرار من الصفر عشان نتجنب التكرار
+        var buttons = new List<KeyboardButton[]>();
 
-                new[]
-                {
-                    new KeyboardButton(
-                        BotButtons.NewProject)
-                }
-            };
+        // الصف الأول: My Projects و Tasks جنب بعض
+        buttons.Add(new[]
+        {
+        new KeyboardButton(BotButtons.MyProjects),
+        new KeyboardButton("📋 Tasks") // تأكد أن الاسم هنا هو الوحيد اللي بتستخدمه
+    });
 
+        // الصف الثاني: Create Project لوحده
+        buttons.Add(new[]
+        {
+        new KeyboardButton(BotButtons.NewProject)
+    });
+
+        // باقي الأزرار (Dashboard, Workspace, إلخ) بتضاف فقط لو فيه مشاريع
         if (projects.Any())
         {
-            buttons.Add(
-                new[]
-                {
-                    new KeyboardButton(
-                        BotButtons.Dashboard),
+            buttons.Add(new[]
+            {
+            new KeyboardButton(BotButtons.Dashboard),
+            new KeyboardButton(BotButtons.Workspace)
+        });
 
-                    new KeyboardButton(
-                        BotButtons.Workspace)
-                });
-
-            buttons.Add(
-                new[]
-                {
-                    new KeyboardButton(
-                        BotButtons.Reports),
-
-                    new KeyboardButton(
-                        BotButtons.DeleteProject)
-                });
+            buttons.Add(new[]
+            {
+            new KeyboardButton(BotButtons.Reports),
+            new KeyboardButton(BotButtons.DeleteProject)
+        });
         }
 
-        buttons.Add(
-            new[]
-            {
-                new KeyboardButton(
-                    BotButtons.Help)
-            });
+        buttons.Add(new[] { new KeyboardButton(BotButtons.Help) });
 
-        return new ReplyKeyboardMarkup(
-            buttons)
-        {
-            ResizeKeyboard = true
-        };
+        return new ReplyKeyboardMarkup(buttons) { ResizeKeyboard = true };
     }
 
     // ====================================================
@@ -132,44 +113,31 @@ public class KeyboardFactory
     // Project Details
     // ====================================================
 
-    public static InlineKeyboardMarkup
-        GetProjectDetailInline(
-            Guid projectId)
+    public static InlineKeyboardMarkup GetProjectDetailInline(Guid projectId)
     {
         return new InlineKeyboardMarkup(
         new[]
         {
-            new[]
-            {
-                InlineKeyboardButton
-                .WithCallbackData(
-                    "📊 Dashboard",
-                    $"dashboard:{projectId}")
-            },
-
-            new[]
-            {
-                InlineKeyboardButton
-                .WithCallbackData(
-                    "👥 Workspace",
-                    $"workspace:{projectId}")
-            },
-
-            new[]
-            {
-                InlineKeyboardButton
-                .WithCallbackData(
-                    "📄 Reports",
-                    $"reports:{projectId}")
-            },
-
-            new[]
-            {
-                InlineKeyboardButton
-                .WithCallbackData(
-                    "🗑 Delete",
-                    $"delete_project:{projectId}")
-            }
+        new[] // أضفنا زر الكانبان هنا
+        {
+            InlineKeyboardButton.WithCallbackData("📊 Kanban Board", $"kanban:{projectId}")
+        },
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("📊 Dashboard", $"dashboard:{projectId}")
+        },
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("👥 Workspace", $"workspace:{projectId}")
+        },
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("📄 Reports", $"reports:{projectId}")
+        },
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("🗑 Delete", $"delete_project:{projectId}")
+        }
         });
     }
 
@@ -177,6 +145,24 @@ public class KeyboardFactory
     // Projects List
     // ====================================================
 
+    // أضف هذه الميثود داخل كلاس KeyboardFactory في ملف KeyboardFactory.cs
+
+    public async Task<InlineKeyboardMarkup> GetProjectsTasksInlineAsync(long telegramId)
+    {
+        var projects = await _projectService.GetByTelegramIdAsync(telegramId);
+        var buttons = new List<InlineKeyboardButton[]>();
+
+        foreach (var p in projects)
+        {
+            buttons.Add(new[]
+            {
+            InlineKeyboardButton.WithCallbackData($"📋 {p.Title}", $"tasks_project:{p.Id}"),
+            InlineKeyboardButton.WithCallbackData("📊 Board", $"kanban:{p.Id}")
+        });
+        }
+
+        return new InlineKeyboardMarkup(buttons);
+    }
     public async Task<InlineKeyboardMarkup>
         GetProjectsInlineAsync(
             long telegramId)

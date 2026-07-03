@@ -21,12 +21,14 @@ namespace Freelance_Bot.Infrastruction
             services.AddScoped<ITaskRepository, TaskRepository>();
             services.AddScoped<IInsightRepository, InsightRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
-            services.AddScoped<IReportRepository, ReportRepository>();
+           // services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITaskRepository, TaskRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddScoped<IReportRepository, ReportRepository>();
+            // استبدل 'ReportRepository' باسم الكلاس الفعلي الذي ينفذ واجهة IReportRepository
+            //services.AddScoped<IReportRepository, ReportRepository>();
+            // services.AddScoped<IReportRepository, ReportRepository>();
             ///// background services
             //services.AddHostedService<OverdueTaskDetector>();
             //services.AddHostedService<DeadlineApproachingDetector>();

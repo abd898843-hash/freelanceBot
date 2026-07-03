@@ -1,23 +1,19 @@
-﻿using Freelance_bot.Application.IServieces;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Extensions.Constants;
 using TelegramBot.Handlers.Interface;
-using TelegramBot.Navigation;
-using TelegramBot.Services.Keyboards;
 
 namespace TelegramBot.Handlers.Commands;
 
 public class DashboardCommandHandler : ICommandHandler
 {
     private readonly ITelegramBotClient _bot;
-    private readonly IUserNavigationStore _navStore;
 
-    public DashboardCommandHandler(ITelegramBotClient bot, IUserNavigationStore navStore)
+    public DashboardCommandHandler(
+        ITelegramBotClient bot)
     {
         _bot = bot;
-        _navStore = navStore;
     }
 
     public bool CanHandle(string input)
@@ -25,11 +21,38 @@ public class DashboardCommandHandler : ICommandHandler
 
     public async Task HandleAsync(Message message)
     {
-        _navStore.GoTo(message.Chat.Id, NavigationScreen.Dashboard);
+        var keyboard = new InlineKeyboardMarkup(
+    InlineKeyboardButton.WithWebApp(
+        "🚀 عرض التحليلات الخاصة بك",
+        new WebAppInfo
+        {
+            Url = "https://iodize-tank-sector.ngrok-free.dev/dashboard.html"
+        }
+    )
+);
+        await _bot.SendTextMessageAsync(
 
-        await _bot.SendTextMessageAsync(message.Chat.Id,
-            "📊 *Dashboard*\n━━━━━━━━━━━━━━\n🚧 قريباً...",
-            parseMode: ParseMode.Markdown,
-            replyMarkup: KeyboardFactory.GetBackKeyboard());
+            chatId: message.Chat.Id,
+
+            text:
+@"📊 Dashboard
+
+يمكنك من خلال لوحة التحكم متابعة:
+
+• عدد المشاريع
+
+• عدد التاسكات
+
+• الدخل
+
+• نسب الإنجاز
+
+• المشاريع الحالية
+
+• المواعيد النهائية
+
+اضغط الزر بالأسفل لفتح لوحة التحكم.",
+
+            replyMarkup: keyboard);
     }
 }

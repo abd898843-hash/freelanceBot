@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Management System - Dashboard</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #1a1f2c;
+            --card-bg: #252b3d;
+            --text-color: #ffffff;
+            --text-muted: #8fa0dd;
+            --primary-color: #4facfe;
+            --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --accent-red: #ff5252;
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px;
+            padding-bottom: 32px;
+        }
+
+        .header-card {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+        }
+
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .project-status {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(79, 172, 254, 0.15);
+            color: var(--primary-color);
+        }
+
+        .project-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.08);
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 12px;
+        }
+
+        .progress-bar-fill {
+            background: var(--primary-gradient);
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .deadline-item {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .message-container {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-card">
+        <h1 id="user-name">Dashboard</h1>
+        <p>Freelance Management System</p>
+    </div>
+
+    <div id="main-content">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-title">📋 التاسكات</div><div class="stat-value" id="total-tasks">-</div></div>
+            <div class="stat-card"><div class="stat-title">📁 المشاريع</div><div class="stat-value" id="total-projects">-</div></div>
+            <div class="stat-card"><div class="stat-title">💰 الدخل</div><div class="stat-value" id="total-income">-</div></div>
+            <div class="stat-card"><div class="stat-title">✅ المكتملة</div><div class="stat-value" id="completed-projects">-</div></div>
+        </div>
+
+        <div class="section-title">📊 حالة المشاريع</div>
+        <div class="chart-container"><canvas id="projectChart"></canvas></div>
+
+        <div class="section-title">🚀 المشاريع الحالية</div>
+        <div id="active-projects-container"></div>
+
+        <div class="section-title">⏰ المواعيد القريبة</div>
+        <div id="deadlines-container"></div>
+    </div>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) { tg.ready(); tg.expand(); }
+
+        const BASE_URL = 'https://iodize-tank-sector.ngrok-free.dev';
+        let currentChart = null;
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+        }
+
+        function renderChart(chartData) {
+            const ctx = document.getElementById('projectChart');
+            if (currentChart) currentChart.destroy();
+            if (!chartData || chartData.length === 0) return;
+            currentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.map(item => item.status),
+                    datasets: [{ data: chartData.map(item => item.count), backgroundColor: ['#4facfe', '#00e676', '#ff9100', '#ff5252'] }]
+                }
+            });
+        }
+
+        function renderActiveProjects(projects) {
+            const container = document.getElementById('active-projects-container');
+            if (!projects || !Array.isArray(projects) || projects.length === 0) {
+                container.innerHTML = '<div class="message-container">لا توجد مشاريع نشطة</div>';
+                return;
+            }
+            container.innerHTML = projects.map(p => `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">${p.title || 'مشروع بدون اسم'}</div>
+                            <div class="project-status">${p.status || 'Active'}</div>
+                        </div>
+                        <div class="project-info-row"><span>الميزانية:</span><span>${formatCurrency(p.budget || 0)}</span></div>
+                        <div class="project-info-row"><span>نسبة الإنجاز:</span><span>${p.progress || 0}%</span></div>
+                        <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${p.progress || 0}%"></div></div>
+                    </div>
+                `).join('');
+        }
+
+        function renderDeadlines(deadlines) {
+            const container = document.getElementById('deadlines-container');
+            if (!deadlines || !Array.isArray(deadlines) || deadlines.length === 0) {
+                container.innerHTML = '<div class="message-container">لا توجد مواعيد قريبة</div>';
+                return;
+            }
+            container.innerHTML = deadlines.map(d => {
+                const days = parseInt(d.daysLeft);
+                const displayStatus = days < 0 ? 'تجاوز الموعد' : `متبقي ${days} أيام`;
+                return `
+                    <div class="deadline-item">
+                        <div class="deadline-name">${d.projectTitle || 'مشروع'}</div>
+                        <div style="color: ${days < 0 ? 'var(--accent-red)' : 'var(--text-muted)'}">${displayStatus}</div>
+                    </div>`;
+            }).join('');
+        }
+
+        async function loadDashboardData() {
+            const user = tg?.initDataUnsafe?.user;
+            if (!user?.id) { console.log("Telegram ID missing"); return; }
+            try {
+                const response = await fetch(`${BASE_URL}/api/Dashboard/stats?telegramId=${user.id}`);
+                const data = await response.json();
+                document.getElementById('total-tasks').textContent = data.totalTasks || 0;
+                document.getElementById('total-projects').textContent = data.totalProjects || 0;
+                document.getElementById('total-income').textContent = formatCurrency(data.totalIncome || 0);
+                document.getElementById('completed-projects').textContent = data.completedProjects || 0;
+
+                renderChart(data.chartData);
+                renderActiveProjects(data.activeProjects);
+                renderDeadlines(data.upcomingDeadlines);
+            } catch (error) {
+                document.getElementById('main-content').innerHTML = '<div class="message-container">خطأ في الاتصال بالسيرفر، تأكد أن ngrok يعمل</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+    </script>
+</body>
+</html>

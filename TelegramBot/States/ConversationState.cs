@@ -1,25 +1,23 @@
-﻿namespace TelegramBot.States;
-
-public enum ConversationStep
+﻿namespace TelegramBot.States
 {
-    None,
+    public enum ConversationStep
+    {
+        None,
 
-    // ── Workspace ─────────────────────────────────
-    AwaitingWorkspaceName,
-
-    // ── Project creation (full 6-step flow) ───────
-    AwaitingProjectName,
-    AwaitingProjectDescription,
-    AwaitingBudget,            // ← جديد
-    AwaitingDeadline,          // ← جديد
-    AwaitingConfirmation,      // ← جديد (handled via CallbackQuery)
-
-    // ── Task creation ─────────────────────────────
-    AwaitingTaskTitle,
+        // خطوات إنشاء المشروع والبيانات
+        AwaitingWorkspaceName,      // الخطوة التي طلبت إضافتها
+        AwaitingProjectName,
+        AwaitingProjectDescription,
+        AwaitingClientName,
+        AwaitingClientEmail,
+        AwaitingClientPhone,
+        AwaitingBudget,
+        AwaitingDeadline,
+        AwaitingTaskTitle,
+        AwaitingTaskDescription,
+        AwaitingTaskDeadline,
+        // حالة التأكيد وما بعدها
+        AwaitingConfirmation,
+        AwaitingTaskDecision
+    }
 }
-
-//public class ConversationContext
-//{
-//    public ConversationStep Step { get; set; } = ConversationStep.None;
-//    public Dictionary<string, string> Data { get; set; } = new();
-//}

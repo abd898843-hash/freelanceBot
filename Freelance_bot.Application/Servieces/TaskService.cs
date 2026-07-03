@@ -1,14 +1,15 @@
-﻿using Freelance_bot.Application.Feature.Tasks.Request;
+﻿using Freelance_bot.Application.Feature.Automation;
+using Freelance_bot.Application.Feature.Tasks.Request;
 using Freelance_bot.Application.Feature.Tasks.Response;
 using Freelance_bot.Application.IServieces;
 using Freelance_Bot.Domain.Entity;
 using Freelance_Bot.Domain.IRepository;
-using TaskStatusEnum = Freelance_Bot.Domain.Enum.TaskStatus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskStatusEnum = Freelance_Bot.Domain.Enum.TaskStatus;
 
 namespace Freelance_bot.Application.Servieces
 {
@@ -132,5 +133,66 @@ namespace Freelance_bot.Application.Servieces
                 task.SubTasks?.Select(s => MapToResponse(s, projectTitle)).ToList() ?? [],
                 task.CreatedAt
             );
+        public async Task<TaskResponse> GetByIdAsync(Guid id, Guid userId)
+        {
+            var task = await taskRepo.GetByIdAsync(id)
+                ?? throw new KeyNotFoundException("Task not found");
+
+            var project = await projectRepo.GetByIdAsync(task.ProjectId)
+                ?? throw new KeyNotFoundException("Project not found");
+
+            if (project.UserId != userId)
+                throw new UnauthorizedAccessException();
+
+            return MapToResponse(task, project.Title);
+        }
+        // هذه هي الميثود التي كانت ناقصة في الـ Implementation
+        public async Task<bool> CreateBulkFromAutomationAsync(Guid projectId, Guid userId, List<AutomationTaskDto> tasks)
+        {
+            var project = await projectRepo.GetByIdAsync(projectId)
+                ?? throw new KeyNotFoundException("Project not found");
+
+            if (project.UserId != userId)
+                throw new UnauthorizedAccessException();
+
+            if (tasks == null || !tasks.Any()) return false;
+
+            var tasksToSave = tasks.Select(t => new TaskItem
+            {
+                ProjectId = project.Id,
+                Title = t.Title,
+                Notes = t.Notes,
+                Priority = Freelance_Bot.Domain.Enum.TaskPriority.Medium, // تأكد من الـ Enum الصحيح
+                DueDate = DateTime.UtcNow.AddDays(3),
+                IsDefault = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            }).ToList();
+
+            await taskRepo.AddRangeAsync(tasksToSave);
+            await projectRepo.RecalculateProgressAsync(project.Id);
+
+            return true;
+        }
+        public async Task<IEnumerable<TaskResponse>> GetTasksByProjectIdAsync(Guid projectId)
+        {
+            // جلب المشروع أولاً للتأكد من وجوده وجلب اسمه
+            var project = await projectRepo.GetByIdAsync(projectId)
+                ?? throw new KeyNotFoundException("Project not found");
+
+            // جلب التاسكات
+            var tasks = await taskRepo.GetByProjectIdAsync(projectId);
+
+            // تحويلها إلى TaskResponse
+            return tasks.Select(t => MapToResponse(t, project.Title));
+        }
+        public async Task<List<Project>> GetProjectsByUserIdAsync(Guid userId)
+        {
+            // جلب البيانات وتحويلها إلى قائمة (List) لتتوافق مع نوع الإرجاع
+            var projects = await projectRepo.GetByUserIdAsync(userId);
+            return projects.ToList();
+        }
     }
+
+
 }

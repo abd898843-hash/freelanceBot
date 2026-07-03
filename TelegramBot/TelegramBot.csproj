@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Freelance_bot.Application\Freelance_bot.Application.csproj" />
+    <ProjectReference Include="..\Freelance_Bot.Infrastruction\Freelance_Bot.Infrastruction.csproj" />
   </ItemGroup>
 
 </Project>
