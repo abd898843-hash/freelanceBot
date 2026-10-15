@@ -10,15 +10,15 @@ namespace Freelance_bot.Application.IServieces
 {
     public interface ITaskService
     {
-        // الميثود التي يحتاجها الـ TaskOpenCallbackHandler
+      
         Task<TaskResponse> GetByIdAsync(Guid id, Guid userId);
 
-        // الميثود الأساسية
+       
         Task<TaskResponse> CreateAsync(Guid userId, CreateTaskRequest request);
         Task<IEnumerable<TaskResponse>> CreateBulkAsync(Guid userId, BulkCreateTasksRequest request);
 
-        // ميثود الأتمتة (كانت ناقصة في الإنترفيس)
-        Task<bool> CreateBulkFromAutomationAsync(Guid projectId, Guid userId, List<AutomationTaskDto> tasks);
+      
+        Task<bool> CreateBulkFromAutomationAsync(Guid projectId, List<AutomationTaskDto> tasks);
 
         Task<IEnumerable<TaskResponse>> GetByProjectAsync(Guid projectId, Guid userId);
         Task<TaskResponse> UpdateAsync(Guid id, Guid userId, UpdateTaskRequest request);

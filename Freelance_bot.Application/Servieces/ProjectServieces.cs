@@ -99,7 +99,7 @@ namespace Freelance_bot.Application.Servieces
             await _projectRepository.DeleteAsync(id);
         }
 
-        // --- Bot Methods ---
+        // --- Bot Methods ssssss
 
         public async Task<List<ProjectBotDto>> GetByTelegramIdAsync(long telegramId)
         {

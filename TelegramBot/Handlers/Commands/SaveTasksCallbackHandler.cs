@@ -24,7 +24,7 @@ public class SaveTasksCallbackHandler : ICallbackHandler
         var projectId = Guid.Parse(callback.Data!.Split('_').Last());
         var chatId = callback.Message!.Chat.Id;
 
-        // استرجاع المصفوفة الجديدة
+        
         var tasksToSave = _stateStore.Get(chatId).TemporaryAutomationTasks;
 
         if (tasksToSave == null || !tasksToSave.Any())
@@ -39,8 +39,8 @@ public class SaveTasksCallbackHandler : ICallbackHandler
             {
                 Id = Guid.NewGuid(),
                 ProjectId = projectId,
-                Title = dto.Title, // مأخوذة من AutomationTaskDto
-                Notes = dto.Notes, // مأخوذة من AutomationTaskDto
+                Title = dto.Title, 
+                Notes = dto.Notes, 
                 Status = Freelance_Bot.Domain.Enum.TaskStatus.Todo
             };
             _context.tasks.Add(newTask);
@@ -48,7 +48,7 @@ public class SaveTasksCallbackHandler : ICallbackHandler
 
         await _context.SaveChangesAsync();
 
-        // تنظيف الـ State
+        
         var ctx = _stateStore.Get(chatId);
         ctx.TemporaryAutomationTasks = null;
         _stateStore.Set(chatId, ctx);

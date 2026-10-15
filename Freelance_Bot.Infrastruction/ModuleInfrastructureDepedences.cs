@@ -26,7 +26,7 @@ namespace Freelance_Bot.Infrastruction
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITaskRepository, TaskRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
-            // استبدل 'ReportRepository' باسم الكلاس الفعلي الذي ينفذ واجهة IReportRepository
+            // IReportRepository
             //services.AddScoped<IReportRepository, ReportRepository>();
             // services.AddScoped<IReportRepository, ReportRepository>();
             ///// background services

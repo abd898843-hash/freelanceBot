@@ -32,7 +32,6 @@ namespace TelegramBot.Handlers.Callbacks
             if (callback.Message is null)
                 return;
 
-            // 1. استخراج الـ ID وتحديث الحالة
             var taskId = Guid.Parse(callback.Data!.Split(':')[1]);
             var user = await _userService.GetOrCreateByTelegramIdAsync(
                 callback.From.Id,
@@ -41,16 +40,13 @@ namespace TelegramBot.Handlers.Callbacks
             var task = await _taskService.GetByIdAsync(taskId, user.Id);
             var newStatus = task.Status.Next();
 
-            // تحديث الحالة في الداتا بيز
             await _taskService.UpdateAsync(
                 taskId,
                 user.Id,
                 new UpdateTaskRequest(null, null, newStatus, null, null));
 
-            // 2. بناء الأزرار الديناميكية للتفاعل مع الحالة الجديدة
             var keyboardButtons = new List<InlineKeyboardButton[]>();
 
-            // زر التبديل للحالة التالية
             if (newStatus != Freelance_Bot.Domain.Enum.TaskStatus.Done)
             {
                 string moveButtonText = newStatus == Freelance_Bot.Domain.Enum.TaskStatus.Todo
@@ -64,14 +60,13 @@ namespace TelegramBot.Handlers.Callbacks
                 keyboardButtons.Add(new[] { InlineKeyboardButton.WithCallbackData("↩️ إعادة فتح", $"task_move:{taskId}") });
             }
 
-            // أزرار التحكم: الحذف + الرجوع للوحة الكانبان (مهم جداً لتحديث الصورة كما في image_bffec9.png)
             keyboardButtons.Add(new[]
             {
                 InlineKeyboardButton.WithCallbackData("🗑 حذف", $"task_delete:{taskId}"),
                 InlineKeyboardButton.WithCallbackData("🔙 العودة للكانبان", $"kanban:{task.ProjectId}")
             });
 
-            // 3. تجهيز نص التحديث
+         
             var updatedText = $"""
             📌 *تحديث حالة التاسك:*
             ━━━━━━━━━━━━━━
@@ -79,7 +74,7 @@ namespace TelegramBot.Handlers.Callbacks
             📊 *الحالة الجديدة:* {GetStatusIcon(newStatus)} {newStatus}
             """;
 
-            // 4. تحديث الرسالة الحالية
+        
             await _bot.EditMessageTextAsync(
                 chatId: callback.Message.Chat.Id,
                 messageId: callback.Message.MessageId,
@@ -87,7 +82,7 @@ namespace TelegramBot.Handlers.Callbacks
                 parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                 replyMarkup: new InlineKeyboardMarkup(keyboardButtons));
 
-            // إشعار للمستخدم
+         
             await _bot.AnswerCallbackQueryAsync(callback.Id, "تم تحديث الحالة بنجاح!");
         }
 

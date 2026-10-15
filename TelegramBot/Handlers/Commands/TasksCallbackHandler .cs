@@ -39,7 +39,7 @@ public class TasksCallbackHandler : ICallbackHandler
         var projectId =
             Guid.Parse(callback.Data!.Split(':')[1]);
 
-        // ⚠️ استخدم userId الحقيقي عندك
+
         var user =
       await _userService
       .GetOrCreateByTelegramIdAsync(

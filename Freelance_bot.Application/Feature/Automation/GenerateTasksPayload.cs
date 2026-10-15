@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace Freelance_bot.Application.Feature.Automation
 {
-    public class GenerateTasksPayload
+    namespace Freelance_bot.Application.Feature.Automation
     {
-        public Guid ProjectId { get; set; } // تم تحويلها لـ Guid لتتوافق مع نظام الـ EntityId الخاص بك
-        public string ProjectTitle { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public DateTime? Deadline { get; set; }
-        public decimal? Budget { get; set; }
+        public class GenerateTasksPayload
+        {
+            public Guid ProjectId { get; set; }
+            public string Title { get; set; } = string.Empty;
+            public string Description { get; set; } = string.Empty;
+            public string? Deadline { get; set; }
+            public decimal? Budget { get; set; }
+            public long ChatId { get; set; } 
+        }
     }
 }

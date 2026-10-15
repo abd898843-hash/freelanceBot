@@ -1,23 +1,24 @@
 ﻿using Freelance_bot.Application.Feature.Automation;
 
-namespace TelegramBot.States;
-
-public class ConversationContext
+namespace TelegramBot.States
 {
-    public ConversationStep Step { get; set; }
-        = ConversationStep.None;
+    public class ConversationContext
+    {
+        public ConversationStep Step { get; set; } = ConversationStep.None;
 
-    public Dictionary<string, string> Data { get; set; }
-        = new();
+        public Dictionary<string, string> Data { get; set; } = new();
 
-    public Stack<string> NavigationHistory { get; set; }
-        = new();
+        public Stack<string> NavigationHistory { get; set; } = new();
 
-    public Guid? CreatedProjectId { get; set; }
+        // إضافة UserId هنا
+        public Guid? UserId { get; set; }
 
-    public Guid? CurrentProjectId { get; set; }
+        public Guid? CreatedProjectId { get; set; }
 
-    // إضافة هذه الخاصية التي يستخدمها BotUpdateHandler للتحقق من حالة الإنشاء
-    public bool IsProjectCreated { get; set; }
-    public List<AutomationTaskDto>? TemporaryAutomationTasks { get; set; }
+        public Guid? CurrentProjectId { get; set; }
+
+        public bool IsProjectCreated { get; set; }
+
+        public List<AutomationTaskDto>? TemporaryAutomationTasks { get; set; }
+    }
 }

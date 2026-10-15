@@ -99,8 +99,6 @@ namespace TelegramBot.Handlers.Callbacks
 
             foreach (var task in tasks)
             {
-                // الزر يعرض اسم التاسك وأيقونة حالتها
-                // عند الضغط، سيقوم الـ Handler الخاص بـ task_move بتغيير حالتها
                 string statusIcon = GetStatusIcon(task.Status);
                 buttonsList.Add(new[]
                 {
@@ -108,7 +106,6 @@ namespace TelegramBot.Handlers.Callbacks
         });
             }
 
-            // زر الإضافة في الأسفل
             buttonsList.Add(new[]
             {
         InlineKeyboardButton.WithCallbackData("➕ إضافة تاسك للمشروع", $"task_create:{projectId}")

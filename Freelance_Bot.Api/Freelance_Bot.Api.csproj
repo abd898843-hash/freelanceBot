@@ -23,4 +23,8 @@
     <ProjectReference Include="..\TelegramBot\TelegramBot.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="workflows\" />
+  </ItemGroup>
+
 </Project>

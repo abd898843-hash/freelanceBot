@@ -22,7 +22,7 @@ public class ReportTypeCallbackHandler : ICallbackQueryHandler
     {
         await _bot.AnswerCallbackQueryAsync(callback.Id);
 
-        // الصيغة: report_type:{typeIndex}:{projectId}
+        
         var parts = callback.Data!.Split(':');
         var reportType = parts[1]; // 0, 1, 2
         var projectId = parts[2];

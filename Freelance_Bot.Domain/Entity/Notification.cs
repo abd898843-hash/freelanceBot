@@ -17,7 +17,7 @@ namespace Freelance_Bot.Domain.Entity
         public string Body { get; set; } = string.Empty;
         public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
 
-        public string? RefEntityType { get; set; } // Project, Task, Report
+        public string? RefEntityType { get; set; } 
         public Guid? RefEntityId { get; set; }
 
         public DateTime? SentAt { get; set; }

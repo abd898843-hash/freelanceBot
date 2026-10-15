@@ -13,7 +13,7 @@ namespace Freelance_bot.Application
                 cfg.RegisterServicesFromAssembly(
                     typeof(ModuleApplicationDependancyInjection).Assembly));
 
-            // config Mapper
+         
             services.AddAutoMapper(cfg => { },
                      typeof(ModuleApplicationDependancyInjection).Assembly);
             services.AddScoped<IClientService, ClientService>();

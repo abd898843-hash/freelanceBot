@@ -10,6 +10,7 @@ namespace Freelance_Bot.Domain.Enum
         Active,
         Paused,
         Completed,
+        Archived,
         Cancelled
     }
 

@@ -17,15 +17,15 @@ namespace TelegramBot.Extensions
     {
         public static IServiceCollection AddTelegramBot(this IServiceCollection services, string token)
         {
-            // ── Singletons ──────────────────────────────────────────
+         
             services.AddSingleton<ITelegramBotClient>(_ => new TelegramBotClient(token));
             services.AddSingleton<IConversationStateStore, ConversationStateStore>();
             services.AddSingleton<IUserNavigationStore, UserNavigationStore>();
 
-            // ── Scoped ──────────────────────────────────────────────
+    
             services.AddScoped<KeyboardFactory>();
 
-            // ── Command Handlers ────────────────────────────────────
+        
             services.AddScoped<ICommandHandler, StartCommandHandler>();
             services.AddScoped<ICommandHandler, NewProjectCommandHandler>();
             services.AddScoped<ICommandHandler, ProjectsCommandHandler>();
@@ -36,14 +36,14 @@ namespace TelegramBot.Extensions
             services.AddScoped<ICommandHandler, BackCommandHandler>();
             services.AddScoped<ICommandHandler, DeleteProjectCommandHandler>();
 
-            // ── Callback Handlers (نظام الـ Kanban والتاسكات) ────────
+        
             services.AddTransient<ICallbackHandler, DashboardCallbackHandler>();
             services.AddTransient<ICallbackHandler, TasksKanbanCallbackHandler>();
             services.AddTransient<ICallbackHandler, TaskMoveCallbackHandler>();
             services.AddTransient<ICallbackHandler, TaskDeleteCallbackHandler>();
             services.AddTransient<ICallbackHandler, TaskOpenCallbackHandler>();
 
-            // ── Main router ─────────────────────────────────────────
+        
             services.AddScoped<BotUpdateHandler>();
 
             return services;

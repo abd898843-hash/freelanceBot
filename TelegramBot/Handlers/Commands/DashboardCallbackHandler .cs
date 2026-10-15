@@ -21,7 +21,7 @@ public class DashboardCallbackHandler : ICallbackHandler
 
         var keyboard = new InlineKeyboardMarkup(InlineKeyboardButton.WithWebApp(
     "📊 Open Dashboard",
-    new WebAppInfo { Url = url })); // التعديل هنا
+    new WebAppInfo { Url = url })); 
 
         await _bot.SendTextMessageAsync(
             callback.Message!.Chat.Id,

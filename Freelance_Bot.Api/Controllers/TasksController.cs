@@ -2,7 +2,7 @@
 using Freelance_bot.Application.IServieces;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+// https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Freelance_Bot.Api.Controllers
 {
@@ -16,7 +16,7 @@ namespace Freelance_Bot.Api.Controllers
             return CreatedAtAction(nameof(GetByProject), new { projectId = task.ProjectId }, task);
         }
 
-        // Called by n8n Smart Setup after ProjectCreated event
+
         [HttpPost("bulk")]
         public async Task<IActionResult> CreateBulk([FromBody] BulkCreateTasksRequest request)
         {

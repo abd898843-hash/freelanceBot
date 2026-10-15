@@ -3,7 +3,7 @@ using Freelance_bot.Application.IServieces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+//  https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Freelance_Bot.Api.Controllers
 {
@@ -14,7 +14,6 @@ namespace Freelance_Bot.Api.Controllers
         public async Task<IActionResult> GetActive()
             => Ok(await insightService.GetActiveAsync(CurrentUserId));
 
-        // n8n posts bulk insights from daily AI cron
         [HttpPost("bulk")]
         [AllowAnonymous]
         public async Task<IActionResult> BulkCreate(

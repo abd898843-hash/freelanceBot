@@ -3,9 +3,7 @@
     public enum ConversationStep
     {
         None,
-
-        // خطوات إنشاء المشروع والبيانات
-        AwaitingWorkspaceName,      // الخطوة التي طلبت إضافتها
+        AwaitingWorkspaceName,     
         AwaitingProjectName,
         AwaitingProjectDescription,
         AwaitingClientName,
@@ -15,8 +13,7 @@
         AwaitingDeadline,
         AwaitingTaskTitle,
         AwaitingTaskDescription,
-        AwaitingTaskDeadline,
-        // حالة التأكيد وما بعدها
+        AwaitingTaskDeadline,   
         AwaitingConfirmation,
         AwaitingTaskDecision
     }

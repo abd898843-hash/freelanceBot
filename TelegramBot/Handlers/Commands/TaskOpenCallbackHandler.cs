@@ -36,10 +36,10 @@ public class TaskOpenCallbackHandler : ICallbackHandler
                 callback.From.Id,
                 callback.From.Username ?? "");
 
-        // التصحيح: جلب التاسك المحددة لمعرفة بياناتها وحالتها
+        
         var task = await _taskService.GetByIdAsync(taskId, user.Id);
 
-        // بناء قائمة الأزرار ديناميكياً
+    
         var keyboardButtons = new List<InlineKeyboardButton[]>();
 
         if (task.Status != Freelance_Bot.Domain.Enum.TaskStatus.Done)
@@ -61,7 +61,7 @@ public class TaskOpenCallbackHandler : ICallbackHandler
             });
         }
 
-        // إضافة زر الحذف
+    
         keyboardButtons.Add(new[]
         {
             InlineKeyboardButton.WithCallbackData("🗑 Delete Task", $"task_delete:{taskId}")

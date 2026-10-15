@@ -14,31 +14,27 @@ public class KeyboardFactory
         _projectService = projectService;
     }
 
-    // ====================================================
-    // Main Menu
-    // ====================================================
-
     public async Task<ReplyKeyboardMarkup> GetMainMenuAsync(long telegramId)
     {
         var projects = await _projectService.GetByTelegramIdAsync(telegramId);
 
-        // بننشئ قائمة الأزرار من الصفر عشان نتجنب التكرار
+   
         var buttons = new List<KeyboardButton[]>();
 
-        // الصف الأول: My Projects و Tasks جنب بعض
+        
         buttons.Add(new[]
         {
         new KeyboardButton(BotButtons.MyProjects),
-        new KeyboardButton("📋 Tasks") // تأكد أن الاسم هنا هو الوحيد اللي بتستخدمه
+        new KeyboardButton("📋 Tasks") 
     });
 
-        // الصف الثاني: Create Project لوحده
+      
         buttons.Add(new[]
         {
         new KeyboardButton(BotButtons.NewProject)
     });
 
-        // باقي الأزرار (Dashboard, Workspace, إلخ) بتضاف فقط لو فيه مشاريع
+   
         if (projects.Any())
         {
             buttons.Add(new[]
@@ -59,10 +55,7 @@ public class KeyboardFactory
         return new ReplyKeyboardMarkup(buttons) { ResizeKeyboard = true };
     }
 
-    // ====================================================
-    // Back Keyboard
-    // ====================================================
-
+    
     public static ReplyKeyboardMarkup
         GetBackKeyboard()
     {
@@ -83,10 +76,7 @@ public class KeyboardFactory
         };
     }
 
-    // ====================================================
-    // Confirm Delete
-    // ====================================================
-
+    
     public static InlineKeyboardMarkup
         GetConfirmDeleteInline(
             Guid projectId)
@@ -109,16 +99,13 @@ public class KeyboardFactory
         });
     }
 
-    // ====================================================
-    // Project Details
-    // ====================================================
 
     public static InlineKeyboardMarkup GetProjectDetailInline(Guid projectId)
     {
         return new InlineKeyboardMarkup(
         new[]
         {
-        new[] // أضفنا زر الكانبان هنا
+        new[] 
         {
             InlineKeyboardButton.WithCallbackData("📊 Kanban Board", $"kanban:{projectId}")
         },
@@ -141,11 +128,7 @@ public class KeyboardFactory
         });
     }
 
-    // ====================================================
-    // Projects List
-    // ====================================================
-
-    // أضف هذه الميثود داخل كلاس KeyboardFactory في ملف KeyboardFactory.cs
+  
 
     public async Task<InlineKeyboardMarkup> GetProjectsTasksInlineAsync(long telegramId)
     {

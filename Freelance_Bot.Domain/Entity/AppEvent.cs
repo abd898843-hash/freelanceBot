@@ -12,14 +12,14 @@ namespace Freelance_Bot.Domain.Entity
         public Guid UserId { get; set; }
 
         [Required, MaxLength(100)]
-        public string EntityType { get; set; } = string.Empty; // Project, Task, Report
+        public string EntityType { get; set; } = string.Empty; 
         public Guid? EntityId { get; set; }
 
         [Required, MaxLength(100)]
-        public string EventName { get; set; } = string.Empty; // ProjectCreated, TaskOverdue, etc.
+        public string EventName { get; set; } = string.Empty; 
 
-        public string? Payload { get; set; } // JSON serialized data for n8n
-        public string? ProcessedBy { get; set; } // n8n | internal
+        public string? Payload { get; set; } 
+        public string? ProcessedBy { get; set; } 
         public bool IsProcessed { get; set; } = false;
         public DateTime? ProcessedAt { get; set; }
 

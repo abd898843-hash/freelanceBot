@@ -18,7 +18,7 @@ namespace Freelance_Bot.Domain.Entity
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Company { get; set; }
-        public string Status { get; set; } = "active"; // active, inactive, archived
+        public string Status { get; set; } = "active"; 
         public DateTime? LastContactedAt { get; set; }
 
         // Navigation

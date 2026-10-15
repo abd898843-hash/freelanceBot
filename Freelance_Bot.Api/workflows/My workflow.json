@@ -1,0 +1,170 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/create-project-tasks",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        -128
+      ],
+      "id": "5aa98b84-d769-42d5-ba1b-ac79d538fbb9",
+      "name": "Webhook",
+      "webhookId": "5181e8ca-d792-4703-9e74-dd91244bb90b"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  json: {\n    projectId: $('Webhook').item.json.body.projectId,\n    chatId: $('Webhook').item.json.body.chatId,\n    // التعديل هنا: حذفنا كلمة tasks لأنها غير موجودة في هيكل الـ Input\n    tasks: JSON.parse(items[0].json.content.parts[0].text)\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -32
+      ],
+      "id": "a8fd7893-9862-476f-83df-da2a84c3aa90",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\"Act as a task generator. Based on the project details, generate a list of tasks.\nCRITICAL: Return ONLY a valid JSON array of objects.\nDo not include any introduction, markdown formatting, or explanation.\nThe format must be exactly:\n[\n{ \"Title\": \"Task Name\", \"Notes\": \"Task description\" },\n{ \"Title\": \"Task Name\", \"Notes\": \"Task description\" }\n]\""
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -272
+      ],
+      "id": "d1372c35-41d1-4a26-b601-d9e4eee960c9",
+      "name": "Message a model",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4zhvA31p2zKgHrrw",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5102/api/automation/tasks",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"projectId\": \"{{$json.projectId}}\",\n  \"tasks\": {{ JSON.stringify($json.tasks) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        96,
+        -272
+      ],
+      "id": "04609760-7a23-4384-adf0-9d87e79a5de8",
+      "name": "HTTP Request",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5102/api/automation/tasks-callback",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chatId\": {{ $('Webhook').item.json.body.chatId }},\n  \"projectId\": \"{{ $('Webhook').item.json.body.projectId }}\",\n  \"tasksCount\": {{ $items().length }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        240,
+        -80
+      ],
+      "id": "fee68b98-fdc4-4132-bef3-6f143e024622",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0f9b1e71-8e2f-480d-a491-b671210a3948",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21acb247a21f8d4327926bb1faafae00338348a89ea456c0d53dc42478dee1f2"
+  },
+  "nodeGroups": [],
+  "id": "3cO58HJhVOSLImgp",
+  "tags": []
+}

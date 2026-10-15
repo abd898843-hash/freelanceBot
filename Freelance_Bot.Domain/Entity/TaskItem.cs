@@ -20,7 +20,7 @@ namespace Freelance_Bot.Domain.Entity
         public Enum.TaskStatus Status { get; set; } = Enum.TaskStatus.Todo;
         public Enum.TaskPriority Priority { get; set; } = Enum.TaskPriority.Medium;
         public DateTime? DueDate { get; set; }
-        public bool IsDefault { get; set; } = false; // created by Smart Setup
+        public bool IsDefault { get; set; } = false; 
         public DateTime? CompletedAt { get; set; }
 
         // Navigation

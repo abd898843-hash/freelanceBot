@@ -11,7 +11,7 @@ namespace Freelance_bot.Application.IServieces
     public interface IInsightService
     {
         Task<IEnumerable<InsightResponse>> GetActiveAsync(Guid userId);
-        Task BulkCreateAsync(BulkInsightsRequest request); // called by n8n
+        Task BulkCreateAsync(BulkInsightsRequest request);   // called by n8n
         Task DismissAsync(Guid insightId, Guid userId);
     }
 }

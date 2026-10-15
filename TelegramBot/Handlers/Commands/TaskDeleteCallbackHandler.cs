@@ -31,10 +31,10 @@ namespace TelegramBot.Handlers.Callbacks
 
             var userId = user.Id;
 
-            // تنفيذ الحذف في الداتا بيز
+         
             await _taskService.DeleteAsync(taskId, userId);
 
-            // تعديل الرسالة الحالية لإعلام المستخدم بالحذف ومسح الأزرار القديمة
+      
             await _bot.EditMessageTextAsync(
                 chatId: callback.Message.Chat.Id,
                 messageId: callback.Message.MessageId,

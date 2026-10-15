@@ -11,16 +11,16 @@ namespace Freelance_Bot.Domain.Entity
     {
         [Required]
         public Guid ProjectId { get; set; }
-        public Guid? GeneratedBy { get; set; } // User ID
+        public Guid? GeneratedBy { get; set; } 
 
         public ReportType Type { get; set; } = ReportType.Manual;
         //public ReportStatus Status { get; set; } = ReportStatus.Pending;
 
         public string? AiSummary { get; set; }
         public string? AiSuggestions { get; set; }
-        public string? RawData { get; set; } // JSON serialized project data sent to AI
+        public string? RawData { get; set; } 
 
-        public string? SentVia { get; set; } // email | telegram | both
+        public string? SentVia { get; set; } 
         public DateTime? SentAt { get; set; }
         public DateTime? GeneratedAt { get; set; }
 

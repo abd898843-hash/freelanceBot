@@ -21,7 +21,7 @@ namespace Freelance_Bot.Domain.Entity
         public string? ActionHint { get; set; }
 
         public bool IsDismissed { get; set; } = false;
-        public string TriggerSource { get; set; } = "cron"; // cron | event | manual
+        public string TriggerSource { get; set; } = "cron"; 
         public DateTime? ExpiresAt { get; set; }
 
         // Navigation

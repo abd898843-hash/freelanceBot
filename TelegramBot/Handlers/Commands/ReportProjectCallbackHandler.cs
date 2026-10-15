@@ -17,7 +17,7 @@ namespace TelegramBot.Handlers.Commands
 
         public async Task HandleAsync(CallbackQuery callback)
         {
-            // إنهاء حالة الـ Loading في التليجرام
+          
             await _bot.AnswerCallbackQueryAsync(callback.Id);
 
             var parts = callback.Data!.Split(':');

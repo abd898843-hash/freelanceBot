@@ -10,8 +10,7 @@ namespace Freelance_bot.Application.Mapping
         public ProjectProfile()
         {
             CreateMap<Project, ProjectResponse>();
-                //.ForMember(dest => dest.ClientName,
-                //    opt => opt.MapFrom(src => src.Client.Name));
+           
         }
     }
 }

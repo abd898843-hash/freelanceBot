@@ -1,57 +1,57 @@
-﻿using Freelance_bot.Application.Feature.Reports.Request;
-using Freelance_bot.Application.Feature.Reports.Response;
+﻿using Freelance_bot.Application.Feature.Automation;
 using Freelance_bot.Application.IServieces;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using System.Security.Claims;
+using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 [ApiController]
 [Route("api/automation")]
-public class AutomationController : ControllerBase
+
+public class AutomationController(ITaskService taskService, ITelegramBotClient botClient) : ControllerBase
 {
-    private readonly ITaskService _taskService;
-    private readonly IReportService _reportService; // أضفنا خدمة التقارير
-
-    public AutomationController(
-        ITaskService taskService,
-        IReportService reportService)
-    {
-        _taskService = taskService;
-        _reportService = reportService;
-    }
-
-    // الاندبوينت الخاص بإنشاء المهام (كما كان موجوداً سابقاً)
     [HttpPost("tasks")]
-    public async Task<IActionResult> CreateTasks(
-       [FromBody] Freelance_bot.Application.Feature.Automation.CreateTasksFromAutomationRequest request)
+    public async Task<IActionResult> CreateBulkFromAutomation([FromBody] CreateTasksFromAutomationRequest request)
     {
-        var userId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                     ?? throw new UnauthorizedAccessException());
-
-        // قم بعمل تحويل للقائمة من TaskItemDto إلى AutomationTaskDto
-        var automationTasks = request.Tasks.Select(t => new Freelance_bot.Application.Feature.Automation.AutomationTaskDto
+        var automationTasks = request.Tasks.Select(x => new AutomationTaskDto
         {
-            Title = t.Title,
-            Notes = t.Notes
-            // أضف أي خصائص أخرى إذا كانت موجودة في الـ DTO
+            Title = x.Title,
+            Notes = x.Notes
         }).ToList();
 
-        // الآن مرر القائمة المحولة
-        var result = await _taskService.CreateBulkFromAutomationAsync(
-            request.ProjectId,
-            userId,
-            automationTasks
-        );
+      
+        var result = await taskService.CreateBulkFromAutomationAsync(request.ProjectId, automationTasks);
 
-        if (!result)
-            return BadRequest(new { message = "Failed to create tasks via automation." });
-
+        if (!result) return BadRequest();
         return Ok(new { success = true });
     }
-    // الاندبوينت الجديد الخاص بـ AI Reporting Callback (مهم جداً للـ n8n)
-    [HttpPost("report-callback")]
-    public async Task<IActionResult> HandleAiCallback([FromBody] ReportAiResultCallback callback)
+
+    [HttpPost("tasks-callback")]
+    public async Task<IActionResult> HandleTasksCallback([FromBody] TasksCallbackRequest request)
     {
-        await _reportService.HandleAiCallbackAsync(callback);
-        return Ok(new { success = true });
+        try
+        {
+           
+            await botClient.SendTextMessageAsync(
+                chatId: request.ChatId,
+                text: $"✅ تم إنشاء {request.TasksCount} مهمة بنجاح للمشروع!",
+                replyMarkup: new InlineKeyboardMarkup(
+                    InlineKeyboardButton.WithCallbackData("📋 عرض المهام", $"tasks_project:{request.ProjectId}")
+                )
+            );
+
+            return Ok(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { success = false, message = "Error sending telegram notification", error = ex.Message });
+        }
+    }
+
+    public class TasksCallbackRequest
+    {
+        public long ChatId { get; set; }
+        public Guid ProjectId { get; set; }
+        public int TasksCount { get; set; }
     }
 }

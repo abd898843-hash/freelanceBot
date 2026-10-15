@@ -40,8 +40,15 @@ namespace Freelance_Bot.Infrastruction.Repos
 
         public async Task AddRangeAsync(IEnumerable<TaskItem> tasks)
         {
+            Console.WriteLine("Repository AddRange");
+
             await _db.tasks.AddRangeAsync(tasks);
-            await _db.SaveChangesAsync();
+
+            Console.WriteLine(_db.ChangeTracker.DebugView.LongView);
+
+            var rows = await _db.SaveChangesAsync();
+
+            Console.WriteLine($"Rows Saved = {rows}");
         }
 
         public async Task<IEnumerable<TaskItem>> GetByStatusAsync(Guid projectId, TaskStatusEnum status)

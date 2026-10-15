@@ -19,7 +19,7 @@ namespace FreelanceOS.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Update update)
         {
-            // تمرير الـ update بالكامل للـ Handler
+            
             await _handler.HandleAsync(update);
             return Ok();
         }

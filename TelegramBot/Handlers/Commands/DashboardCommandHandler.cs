@@ -21,37 +21,37 @@ public class DashboardCommandHandler : ICommandHandler
 
     public async Task HandleAsync(Message message)
     {
-        var keyboard = new InlineKeyboardMarkup(
-    InlineKeyboardButton.WithWebApp(
-        "🚀 عرض التحليلات الخاصة بك",
-        new WebAppInfo
-        {
-            Url = "https://iodize-tank-sector.ngrok-free.dev/dashboard.html"
-        }
-    )
-);
+                var keyboard = new InlineKeyboardMarkup(
+            InlineKeyboardButton.WithWebApp(
+                "🚀 عرض التحليلات الخاصة بك",
+                new WebAppInfo
+                {
+                    Url = "https://iodize-tank-sector.ngrok-free.dev/dashboard.html"
+                }
+            )
+        );
         await _bot.SendTextMessageAsync(
 
             chatId: message.Chat.Id,
 
             text:
-@"📊 Dashboard
+                @"📊 Dashboard
 
-يمكنك من خلال لوحة التحكم متابعة:
+                يمكنك من خلال لوحة التحكم متابعة:
 
-• عدد المشاريع
+                • عدد المشاريع
 
-• عدد التاسكات
+                • عدد التاسكات
 
-• الدخل
+                • الدخل
 
-• نسب الإنجاز
+                • نسب الإنجاز
 
-• المشاريع الحالية
+                • المشاريع الحالية
 
-• المواعيد النهائية
+                • المواعيد النهائية
 
-اضغط الزر بالأسفل لفتح لوحة التحكم.",
+                اضغط الزر بالأسفل لفتح لوحة التحكم.",
 
             replyMarkup: keyboard);
     }
